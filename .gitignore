@@ -23,3 +23,6 @@ target/
 # Data base
 *.db
 /src/manifests/
+
+# Maven
+*.iml

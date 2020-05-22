@@ -1,10 +1,42 @@
 package com.haskellish;
 
-import com.haskellish.util.HillException;
+import com.haskellish.auth.AuthClient;
+import com.haskellish.auth.AuthListener;
+
+import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args) throws HillException {
-        System.out.println(HillCipher.decrypt(HillCipher.encrypt("testst", "keythisab"), "keythisab"));
+    public static String ID;
+    public static String HILL_KEY;
+
+    public static void main(String[] args) {
+        if (args.length == 3) {
+            ID = args[0];
+            HILL_KEY = args[1];
+            Thread authListener = new Thread(new AuthListener(Integer.parseInt(args[2])));
+            authListener.start();
+
+            Scanner in = new Scanner(System.in);
+            String input = "";
+            while (!input.equals("exit")) {
+                input = in.nextLine();
+                switch (input) {
+                    case ("connect"): {
+                        System.out.println("Port?");
+                        new Thread(new AuthClient(in.nextInt())).start();
+                        break;
+                    }
+                    case ("exit"): {
+                        System.out.println("Exiting...");
+                        authListener.interrupt();
+                        break;
+                    }
+                    default:
+                        System.out.println("Wrong command");
+                }
+            }
+        }
+        else System.out.println("Not all arguments accepted");
     }
 }

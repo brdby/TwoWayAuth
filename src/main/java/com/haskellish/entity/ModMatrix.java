@@ -1,4 +1,4 @@
-package com.haskellish.util;
+package com.haskellish.entity;
 
 import java.math.*;
 
