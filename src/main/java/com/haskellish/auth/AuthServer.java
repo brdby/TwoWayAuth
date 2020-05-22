@@ -10,6 +10,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.Random;
 
 public class AuthServer implements Runnable {
@@ -45,15 +46,18 @@ public class AuthServer implements Runnable {
             //send answer
             Random r = new Random();
             int rndNum = r.nextInt(1000);
-            System.out.println(THREAD_ID + ": generated " + rndNum);
+            System.out.println(THREAD_ID + ": generated number " + rndNum);
             msg = new Message(Main.ID, HillCipher.encrypt(rndNum + "," + authRnd + "," + authID, Main.HILL_KEY));
             output.writeUTF(JSON.toJSONString(msg));
 
             //receive both random numbers
             jsonString = input.readUTF();
             msg = JSON.parseObject(jsonString, Message.class);
+            System.out.println(THREAD_ID + ": received " + msg.getMessage());
+            //decrypt
             String[] decryptedMessage = HillCipher.decrypt(msg.getMessage(), Main.HILL_KEY)
                     .replaceAll(" ","").split(",");
+            System.out.println(THREAD_ID + ": decrypted " + Arrays.toString(decryptedMessage));
             //check
             if (decryptedMessage.length != 2
                     || Integer.parseInt(decryptedMessage[0]) != rndNum
@@ -66,6 +70,7 @@ public class AuthServer implements Runnable {
             System.out.println(THREAD_ID + ": authentication complete!");
 
         } catch (IOException | HillException | AuthException e) {
+            System.out.println("Authentication failed!");
             e.printStackTrace();
         }
     }

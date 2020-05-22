@@ -71,6 +71,7 @@ public class AuthClient implements Runnable {
             System.out.println(THREAD_ID + ": authentication complete!");
 
         } catch (IOException | HillException | AuthException e) {
+            System.out.println("Authentication failed!");
             e.printStackTrace();
         }
     }
